@@ -192,7 +192,7 @@ function renderInventory() {
 window.openProductForm = function(productId) {
   document.getElementById('productForm').reset();
   currentProductImage = null;
-  document.getElementById('imagePreview').innerHTML = `<div><span>️</span><p>No image</p></div>`;
+  document.getElementById('imagePreview').innerHTML = `<div><span>🖼️</span><p>No image</p></div>`;
   document.getElementById('customCategoryWrapper').style.display = 'none';
   document.getElementById('customCategory').required = false;
 
