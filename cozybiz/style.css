@@ -3,7 +3,11 @@
    ============================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Nunito+Sans:wght@400;500;600;700&display=swap');
-
+/* Prevent whole page from shifting/zooming on mobile */
+body {
+  overflow-x: hidden;
+  width: 100%;
+}
 :root {
   --cream: #FDF8F3;
   --cream-deep: #F6EEE4;
@@ -590,30 +594,8 @@ h1, h2, h3 {
   padding: 20px;
 }
 
-/* ---------- RESPONSIVE ---------- */
-
-@media (max-width: 860px) {
-  .app { grid-template-columns: 1fr; }
-  .sidebar {
-    flex-direction: row;
-    align-items: center;
-    overflow-x: auto;
-    border-right: none;
-    border-bottom: 1px solid var(--line);
-  }
-  .brand, .sidebar-bottom { display: none; }
-  .sidebar-nav { flex-direction: row; }
-  .main-content { padding: 20px; }
-  .stats-grid, .report-stats, .dashboard-grid, .form-grid,
-  .reports-detail-grid { grid-template-columns: 1fr; }
-}
-
-/* focus visibility for accessibility */
-button:focus-visible, input:focus-visible, select:focus-visible {
-  outline: 2px solid var(--sage);
-  outline-offset: 1px;
-}
 /* ---------- LOGIN SCREEN ---------- */
+
 .login-screen {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
@@ -673,4 +655,133 @@ button:focus-visible, input:focus-visible, select:focus-visible {
   text-align: center;
   margin-top: 10px;
   min-height: 16px;
+}
+
+/* ---------- RESPONSIVE (Mobile Fixes) ---------- */
+
+/* ---------- RESPONSIVE (Mobile Fixes) ---------- */
+
+@media (max-width: 860px) {
+  .app { 
+    grid-template-columns: 1fr; 
+    width: 100%;
+  }
+  
+  /* Fix Top Navigation Bar */
+  .sidebar {
+    flex-direction: row;
+    align-items: center;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+    padding: 12px 16px;
+    position: sticky;
+    top: 0;
+    background: var(--white);
+    z-index: 100;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .brand { 
+    flex-shrink: 0;
+    margin-right: 16px;
+    padding: 0;
+  }
+  
+  .brand h1 { font-size: 16px; }
+  .brand p { display: none; }
+  
+  .sidebar-nav { 
+    flex-direction: row;
+    flex: 1;
+    gap: 8px;
+    overflow-x: auto;
+    /* Hide scrollbar for cleaner look */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .sidebar-nav::-webkit-scrollbar { display: none; }
+  
+  .nav-item {
+    padding: 8px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  
+  .sidebar-bottom { display: none; }
+  
+  /* Fix Main Content Width */
+  .main-content { 
+    padding: 16px; 
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Stack cards vertically */
+  .stats-grid, 
+  .report-stats, 
+  .dashboard-grid, 
+  .form-grid,
+  .reports-detail-grid { 
+    grid-template-columns: 1fr; 
+  }
+  
+  .page-header,
+  .inventory-header,
+  .sales-header,
+  .expenses-header,
+  .reports-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .inventory-toolbar {
+    flex-direction: column;
+  }
+  
+  .search-box, #inventoryCategoryFilter {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Fix Table so it scrolls inside its box without breaking page */
+  .inventory-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--radius-lg);
+    max-width: 100%;
+  }
+  
+  .inventory-table {
+    min-width: 600px; /* Keeps table readable */
+    width: 100%;
+  }
+  
+  .login-card {
+    padding: 30px 20px;
+    margin: 20px;
+  }
+}
+
+/* Extra small phones */
+@media (max-width: 480px) {
+  .sidebar { padding: 10px 12px; }
+  .brand h1 { font-size: 14px; }
+  .nav-item { padding: 6px 10px; font-size: 12px; }
+  .main-content { padding: 12px; }
+  
+  .stats-grid .stat-card,
+  .report-stats .report-stat-card { padding: 16px; }
+  .stat-card strong,
+  .report-stat-card strong { font-size: 22px; }
+}
+
+/* focus visibility for accessibility */
+button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--sage);
+  outline-offset: 1px;
 }
