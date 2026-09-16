@@ -425,9 +425,6 @@ function setupSalesForm() {
         document.getElementById('saleQuantity').value = 1;
         updateSaleTotal();
         
-        // FIX: Jump to dashboard after recording
-        switchPage('dashboard', 'dashboard');
-        
       } catch (err) {
         console.error("Error recording sale:", err);
         alert("Failed to record sale.");
@@ -487,9 +484,6 @@ function setupExpensesForm() {
         // Reset form
         e.target.reset(); 
         document.getElementById('expenseDate').value = todayStr();
-        
-        // FIX: Jump to dashboard after recording
-        switchPage('dashboard', 'dashboard');
         
       } catch (err) {
         console.error("Error adding expense:", err);
