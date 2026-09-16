@@ -386,8 +386,10 @@ window.deleteSale = async function(saleId) {
 function setupSalesForm() {
   const dateInput = document.getElementById('saleDate');
   if (dateInput) dateInput.value = todayStr();
+  
   const prodSelect = document.getElementById('saleProductSelect');
   if (prodSelect) prodSelect.addEventListener('change', updateSaleTotal);
+  
   const qtyInput = document.getElementById('saleQuantity');
   if (qtyInput) qtyInput.addEventListener('input', updateSaleTotal);
 
@@ -397,6 +399,7 @@ function setupSalesForm() {
       e.preventDefault();
       const product = getProduct(document.getElementById('saleProductSelect').value);
       const quantity = Number(document.getElementById('saleQuantity').value);
+      
       if (!product) { alert('Add a product first.'); return; }
       if (quantity > product.stock && !confirm(`Only ${product.stock} in stock. Continue?`)) return;
 
@@ -415,9 +418,16 @@ function setupSalesForm() {
         await updateDoc(doc(db, `users/${currentUser.uid}/products`, product.id), {
           stock: Math.max(0, product.stock - quantity)
         });
+        
+        // Reset form
         e.target.reset(); 
         document.getElementById('saleDate').value = todayStr(); 
         document.getElementById('saleQuantity').value = 1;
+        updateSaleTotal();
+        
+        // FIX: Jump to dashboard after recording
+        switchPage('dashboard', 'dashboard');
+        
       } catch (err) {
         console.error("Error recording sale:", err);
         alert("Failed to record sale.");
@@ -460,6 +470,7 @@ window.deleteExpense = async function(expenseId) {
 function setupExpensesForm() {
   const dateInput = document.getElementById('expenseDate');
   if (dateInput) dateInput.value = todayStr();
+  
   const expForm = document.getElementById('expenseForm');
   if (expForm) {
     expForm.addEventListener('submit', async (e) => {
@@ -469,10 +480,17 @@ function setupExpensesForm() {
         amount: Number(document.getElementById('expenseAmount').value), 
         date: document.getElementById('expenseDate').value 
       };
+      
       try {
         await addDoc(collection(db, `users/${currentUser.uid}/expenses`), expenseData);
+        
+        // Reset form
         e.target.reset(); 
         document.getElementById('expenseDate').value = todayStr();
+        
+        // FIX: Jump to dashboard after recording
+        switchPage('dashboard', 'dashboard');
+        
       } catch (err) {
         console.error("Error adding expense:", err);
         alert("Failed to add expense.");
