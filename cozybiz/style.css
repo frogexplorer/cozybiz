@@ -231,9 +231,10 @@ h1, h2, h3 {
 .pink-card   { background: var(--pink-tint);   color: var(--pink-deep); }
 .lavender-card { background: var(--lavender-tint); color: var(--lavender-deep); }
 .peach-card  { background: var(--peach-tint);  color: var(--peach-deep); }
-.sage-card   { background: var(--sage-tint);   color: var(--sage-deep); }
+.sage-card   { background: #FFF9E6; color: #B8860B; }
 
-.pink-card strong, .lavender-card strong, .peach-card strong, .sage-card strong { color: var(--ink); }
+.pink-card strong, .lavender-card strong, .peach-card strong { color: var(--ink); }
+.sage-card strong { color: #8B6914; }
 
 /* ---------- DASHBOARD GRID / CARDS ---------- */
 
