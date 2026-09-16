@@ -591,3 +591,48 @@ function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+/* ============================================
+   EXPORT TO EXCEL (CSV)
+   ============================================ */
+
+function downloadCSV(csvContent, fileName) {
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement("a");
+  if (link.download !== undefined) {
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", fileName);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+}
+
+const exportBtn = document.getElementById('exportReportsCsvBtn');
+if (exportBtn) {
+  exportBtn.addEventListener('click', () => {
+    let csv = "CozyBiz Data Export\n\n";
+    
+    // 1. Export Products
+    csv += "PRODUCTS\nName,Category,Stock,Price,Cost\n";
+    state.products.forEach(p => {
+      csv += `"${p.name}","${p.category}",${p.stock},${p.price},${p.cost}\n`;
+    });
+    
+    // 2. Export Sales
+    csv += "\nSALES\nDate,Product,Quantity,Total\n";
+    state.sales.forEach(s => {
+      csv += `"${s.date}","${s.productName}",${s.quantity},${s.total}\n`;
+    });
+
+    // 3. Export Expenses
+    csv += "\nEXPENSES\nDate,Description,Amount\n";
+    state.expenses.forEach(x => {
+      csv += `"${x.date}","${x.description}",${x.amount}\n`;
+    });
+
+    // Trigger download
+    downloadCSV(csv, `CozyBiz_Data_${todayStr()}.csv`);
+  });
+}
