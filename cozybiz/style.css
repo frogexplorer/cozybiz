@@ -3,11 +3,19 @@
    ============================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Nunito+Sans:wght@400;500;600;700&display=swap');
+
 /* Prevent whole page from shifting/zooming on mobile */
 body {
   overflow-x: hidden;
   width: 100%;
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
 }
+
 :root {
   --cream: #FDF8F3;
   --cream-deep: #F6EEE4;
@@ -32,15 +40,6 @@ body {
 }
 
 * { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  background: var(--cream);
-  color: var(--ink);
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 15px;
-  line-height: 1.5;
-}
 
 h1, h2, h3 {
   font-family: 'Fraunces', serif;
@@ -73,16 +72,8 @@ h1, h2, h3 {
 
 .brand-icon { font-size: 26px; }
 
-.brand h1 {
-  font-size: 19px;
-  font-weight: 600;
-}
-
-.brand p {
-  margin: 0;
-  font-size: 12px;
-  color: var(--ink-soft);
-}
+.brand h1 { font-size: 19px; font-weight: 600; }
+.brand p { margin: 0; font-size: 12px; color: var(--ink-soft); }
 
 .sidebar-nav {
   display: flex;
@@ -108,18 +99,9 @@ h1, h2, h3 {
   transition: background 0.15s ease, color 0.15s ease;
 }
 
-.nav-item:hover {
-  background: var(--cream-deep);
-  color: var(--ink);
-}
-
-.nav-item.active {
-  background: var(--sage-tint);
-  color: var(--sage-deep);
-}
-
+.nav-item:hover { background: var(--cream-deep); color: var(--ink); }
+.nav-item.active { background: var(--sage-tint); color: var(--sage-deep); }
 .nav-icon { font-size: 16px; }
-
 .sidebar-bottom { margin-top: 12px; }
 
 .mini-note {
@@ -131,21 +113,9 @@ h1, h2, h3 {
   font-size: 12.5px;
 }
 
-.mini-note strong {
-  display: block;
-  font-size: 13px;
-  margin-bottom: 2px;
-}
-
-.mini-note p {
-  margin: 0 0 8px;
-  color: var(--ink-soft);
-}
-
-.backup-actions {
-  display: flex;
-  gap: 6px;
-}
+.mini-note strong { display: block; font-size: 13px; margin-bottom: 2px; }
+.mini-note p { margin: 0 0 8px; color: var(--ink-soft); }
+.backup-actions { display: flex; gap: 6px; }
 
 .small-btn {
   border: 1px solid var(--line);
@@ -197,7 +167,7 @@ h1, h2, h3 {
 
 /* ---------- BUTTONS ---------- */
 
-.primary-button {
+.primary-button, .save-product-btn, .record-sale-btn, .add-expense-btn {
   background: var(--sage);
   color: var(--white);
   border: none;
@@ -210,7 +180,9 @@ h1, h2, h3 {
   transition: background 0.15s ease;
 }
 
-.primary-button:hover { background: var(--sage-deep); }
+.primary-button:hover, .save-product-btn:hover, .record-sale-btn:hover, .add-expense-btn:hover { 
+  background: var(--sage-deep); 
+}
 
 .cancel-btn {
   background: transparent;
@@ -224,24 +196,7 @@ h1, h2, h3 {
 
 .cancel-btn:hover { background: var(--cream-deep); }
 
-.save-product-btn,
-.record-sale-btn,
-.add-expense-btn {
-  background: var(--sage);
-  color: var(--white);
-  border: none;
-  padding: 11px 20px;
-  border-radius: var(--radius-sm);
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.save-product-btn:hover,
-.record-sale-btn:hover,
-.add-expense-btn:hover { background: var(--sage-deep); }
-
-/* ---------- STAT CARDS (dashboard & reports) ---------- */
+/* ---------- STAT CARDS ---------- */
 
 .stats-grid, .report-stats {
   display: grid;
@@ -274,18 +229,13 @@ h1, h2, h3 {
   font-weight: 600;
 }
 
-/* Card Colors */
 .pink-card   { background: var(--pink-tint);   color: var(--pink-deep); }
 .lavender-card { background: var(--lavender-tint); color: var(--lavender-deep); }
 .peach-card  { background: var(--peach-tint);  color: var(--peach-deep); }
-
-/* Gold Profit Box */
 .sage-card   { background: #FFF9E6; color: #B8860B; }
 
-/* Text Colors for Numbers */
 .pink-card strong, .lavender-card strong, .peach-card strong { color: var(--ink); }
-.sage-card strong { color: #8B6914; } /* Darker gold for the profit number */
-
+.sage-card strong { color: #8B6914; }
 
 /* ---------- DASHBOARD GRID / CARDS ---------- */
 
@@ -302,25 +252,22 @@ h1, h2, h3 {
   padding: 20px;
 }
 
-.card-header, .sale-form-header, .expense-form-header,
-.report-detail-header {
+.card-header, .sale-form-header, .expense-form-header, .report-detail-header {
   margin-bottom: 16px;
 }
 
-.card-header h3, .sale-form-header h3, .expense-form-header h3,
-.report-detail-header h3 {
+.card-header h3, .sale-form-header h3, .expense-form-header h3, .report-detail-header h3 {
   font-size: 16px;
   font-weight: 600;
 }
 
-.card-header p, .sale-form-header p, .expense-form-header p,
-.report-detail-header p {
+.card-header p, .sale-form-header p, .expense-form-header p, .report-detail-header p {
   margin: 3px 0 0;
   font-size: 13px;
   color: var(--ink-soft);
 }
 
-/* ---------- LISTS (low stock, recent sales/expenses, top products) ---------- */
+/* ---------- LISTS ---------- */
 
 .list-container {
   display: flex;
@@ -404,7 +351,6 @@ h1, h2, h3 {
 .inventory-table th {
   text-align: left;
   font-size: 12px;
-  text-transform: none;
   color: var(--ink-soft);
   font-weight: 600;
   padding: 12px 16px;
@@ -464,15 +410,10 @@ h1, h2, h3 {
 }
 
 .row-actions button:hover { background: var(--line); }
-
-.row-actions .delete-row-btn {
-  background: var(--pink-tint);
-  color: var(--danger);
-}
-
+.row-actions .delete-row-btn { background: var(--pink-tint); color: var(--danger); }
 .row-actions .delete-row-btn:hover { background: #f0c2d0; }
 
-/* ---------- FORMS (product / sale / expense) ---------- */
+/* ---------- FORMS ---------- */
 
 .form-grid {
   display: grid;
@@ -489,8 +430,7 @@ h1, h2, h3 {
   color: var(--ink-soft);
 }
 
-.form-group input,
-.form-group select {
+.form-group input, .form-group select {
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
@@ -500,8 +440,7 @@ h1, h2, h3 {
   background: var(--cream);
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.form-group input:focus, .form-group select:focus {
   outline: none;
   border-color: var(--sage);
   background: var(--white);
@@ -532,23 +471,9 @@ h1, h2, h3 {
   overflow: hidden;
 }
 
-.product-image-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.product-image-preview div {
-  text-align: center;
-  color: var(--ink-soft);
-  font-size: 11px;
-}
-
-.product-image-preview span {
-  display: block;
-  font-size: 22px;
-  margin-bottom: 2px;
-}
+.product-image-preview img { width: 100%; height: 100%; object-fit: cover; }
+.product-image-preview div { text-align: center; color: var(--ink-soft); font-size: 11px; }
+.product-image-preview span { display: block; font-size: 22px; margin-bottom: 2px; }
 
 .product-form-actions {
   display: flex;
@@ -567,17 +492,8 @@ h1, h2, h3 {
   margin-bottom: 4px;
 }
 
-.sale-total-box span {
-  font-weight: 600;
-  color: var(--sage-deep);
-  font-size: 13px;
-}
-
-.sale-total-box strong {
-  font-family: 'Fraunces', serif;
-  font-size: 20px;
-  color: var(--ink);
-}
+.sale-total-box span { font-weight: 600; color: var(--sage-deep); font-size: 13px; }
+.sale-total-box strong { font-family: 'Fraunces', serif; font-size: 20px; color: var(--ink); }
 
 /* ---------- REPORTS ---------- */
 
@@ -657,7 +573,9 @@ h1, h2, h3 {
   min-height: 16px;
 }
 
-/* ---------- RESPONSIVE (Mobile Fixes) ---------- */
+/* ============================================
+   RESPONSIVE (Mobile Fixes)
+   ============================================ */
 
 @media (max-width: 860px) {
   .app { 
@@ -665,7 +583,6 @@ h1, h2, h3 {
     width: 100%;
   }
   
-  /* Fix Top Navigation Bar */
   .sidebar {
     flex-direction: row;
     align-items: center;
@@ -681,12 +598,7 @@ h1, h2, h3 {
     -webkit-overflow-scrolling: touch;
   }
   
-  .brand { 
-    flex-shrink: 0;
-    margin-right: 16px;
-    padding: 0;
-  }
-  
+  .brand { flex-shrink: 0; margin-right: 16px; padding: 0; }
   .brand h1 { font-size: 16px; }
   .brand p { display: none; }
   
@@ -700,16 +612,9 @@ h1, h2, h3 {
   }
   .sidebar-nav::-webkit-scrollbar { display: none; }
   
-  .nav-item {
-    padding: 8px 12px;
-    font-size: 13px;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  
+  .nav-item { padding: 8px 12px; font-size: 13px; white-space: nowrap; flex-shrink: 0; }
   .sidebar-bottom { display: none; }
   
-  /* Fix Main Content Width */
   .main-content { 
     padding: 16px; 
     width: 100%;
@@ -717,15 +622,7 @@ h1, h2, h3 {
     box-sizing: border-box;
   }
   
-  /* Stack cards vertically */
-  .stats-grid, 
-  .report-stats, 
-  .dashboard-grid, 
-  .form-grid,
-  .reports-detail-grid { 
-    grid-template-columns: 1fr; 
-  }
-  
+  /* FIX: Consistent header spacing on all pages */
   .page-header,
   .inventory-header,
   .sales-header,
@@ -733,36 +630,45 @@ h1, h2, h3 {
   .reports-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 4px;
+    margin-bottom: 20px;
   }
   
-  .inventory-toolbar {
-    flex-direction: column;
+  .page-header .eyebrow, .inventory-header .eyebrow, .sales-header .eyebrow,
+  .expenses-header .eyebrow, .reports-header .eyebrow { margin: 0; }
+  
+  .page-header h2, .inventory-header h2, .sales-header h2,
+  .expenses-header h2, .reports-header h2 {
+    margin: 0;
+    font-size: 24px;
   }
   
-  .search-box, #inventoryCategoryFilter {
-    width: 100%;
-    box-sizing: border-box;
+  .page-header .page-subtitle, .inventory-header .page-subtitle, .sales-header .page-subtitle,
+  .expenses-header .page-subtitle, .reports-header .page-subtitle {
+    margin: 0;
+    font-size: 13px;
   }
   
-  /* --- MAGIC MOBILE TABLE FIX: Turn table into vertical cards --- */
+  .stats-grid, .report-stats, .dashboard-grid, .form-grid, .reports-detail-grid { 
+    grid-template-columns: 1fr; 
+  }
+  
+  .inventory-toolbar { flex-direction: column; gap: 12px; }
+  .search-box, #inventoryCategoryFilter { width: 100%; box-sizing: border-box; }
+  
+  /* MAGIC MOBILE TABLE FIX: Turn table into vertical cards */
   .inventory-table-wrapper {
-    overflow: visible; /* Remove horizontal scroll */
+    overflow: visible;
     background: transparent;
     border: none;
   }
 
-  .inventory-table, 
-  .inventory-table tbody, 
-  .inventory-table tr, 
-  .inventory-table td {
+  .inventory-table, .inventory-table tbody, .inventory-table tr, .inventory-table td {
     display: block;
     width: 100%;
   }
 
-  .inventory-table thead {
-    display: none; /* Hide column headers on mobile */
-  }
+  .inventory-table thead { display: none; }
 
   .inventory-table tr {
     background: var(--white);
@@ -788,7 +694,6 @@ h1, h2, h3 {
     padding-top: 12px;
   }
 
-  /* Add labels to each row item using CSS */
   .inventory-table td::before {
     font-weight: 600;
     color: var(--ink-soft);
@@ -803,32 +708,20 @@ h1, h2, h3 {
   .inventory-table td:nth-child(5)::before { content: "Cost"; }
   .inventory-table td:nth-child(6)::before { content: "Status"; }
 
-  .product-cell {
-    justify-content: flex-end;
-    text-align: right;
-  }
-  /* --- END MOBILE TABLE FIX --- */
-
-  .login-card {
-    padding: 30px 20px;
-    margin: 20px;
-  }
+  .product-cell { justify-content: flex-end; text-align: right; }
+  .login-card { padding: 30px 20px; margin: 20px; }
 }
 
-/* Extra small phones */
 @media (max-width: 480px) {
   .sidebar { padding: 10px 12px; }
   .brand h1 { font-size: 14px; }
   .nav-item { padding: 6px 10px; font-size: 12px; }
   .main-content { padding: 12px; }
   
-  .stats-grid .stat-card,
-  .report-stats .report-stat-card { padding: 16px; }
-  .stat-card strong,
-  .report-stat-card strong { font-size: 22px; }
+  .stats-grid .stat-card, .report-stats .report-stat-card { padding: 16px; }
+  .stat-card strong, .report-stat-card strong { font-size: 22px; }
 }
 
-/* focus visibility for accessibility */
 button:focus-visible, input:focus-visible, select:focus-visible {
   outline: 2px solid var(--sage);
   outline-offset: 1px;
