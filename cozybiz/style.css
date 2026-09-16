@@ -736,22 +736,17 @@ button:focus-visible, input:focus-visible, select:focus-visible {
 }
 /* Fix for when Inventory is Empty on Mobile */
 @media (max-width: 860px) {
-  .inventory-table tr:has(.empty-state) {
+  .inventory-table tr td[colspan="7"] {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
-    margin: 0 !important;
   }
-  .inventory-table td:has(.empty-state) {
-    border: none !important;
-    padding: 20px 0 !important;
-    justify-content: center !important;
-    display: flex !important;
-  }
-  .inventory-table .empty-state {
-    padding: 20px 0 !important;
+  
+  .inventory-table tr td[colspan="7"] .empty-state {
+    padding: 40px 20px !important;
     width: 100%;
     text-align: center;
+    display: block;
   }
 }
