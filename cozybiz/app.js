@@ -25,7 +25,6 @@ let state = { products: [], sales: [], expenses: [] };
 let earningsChart = null;
 let currentProductImage = null;
 
-// Real-time database listeners
 let unsubscribeProducts = null;
 let unsubscribeSales = null;
 let unsubscribeExpenses = null;
@@ -102,7 +101,6 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
 
 function setupRealtimeListeners() {
   if (!currentUser) return;
-  
   const userRef = `users/${currentUser.uid}`;
   
   unsubscribeProducts = onSnapshot(query(collection(db, `${userRef}/products`)), (snapshot) => {
@@ -162,7 +160,9 @@ function renderInventory() {
   const category = document.getElementById('inventoryCategoryFilter').value;
 
   let rows = state.products.filter(p => {
-    return (!search || p.name.toLowerCase().includes(search)) && (category === 'all' || p.category === category);
+    const pCat = p.category.toLowerCase();
+    const matchesCat = category === 'all' || pCat === category || (category === 'other' && !['food','drinks','crafts','clothing'].includes(pCat));
+    return (!search || p.name.toLowerCase().includes(search)) && matchesCat;
   });
 
   if (rows.length === 0) {
@@ -192,7 +192,9 @@ function renderInventory() {
 window.openProductForm = function(productId) {
   document.getElementById('productForm').reset();
   currentProductImage = null;
-  document.getElementById('imagePreview').innerHTML = `<div><span>🖼️</span><p>No image</p></div>`;
+  document.getElementById('imagePreview').innerHTML = `<div><span>️</span><p>No image</p></div>`;
+  document.getElementById('customCategoryWrapper').style.display = 'none';
+  document.getElementById('customCategory').required = false;
 
   if (productId) {
     const p = getProduct(productId);
@@ -200,11 +202,26 @@ window.openProductForm = function(productId) {
     document.getElementById('productFormTitle').textContent = 'Edit Product';
     document.getElementById('productId').value = p.id;
     document.getElementById('productName').value = p.name;
-    document.getElementById('productCategory').value = p.category;
     document.getElementById('productStock').value = p.stock;
     document.getElementById('productLowStockThreshold').value = p.lowStockThreshold;
     document.getElementById('productPrice').value = p.price;
     document.getElementById('productCost').value = p.cost;
+    
+    // Handle Category (Standard vs Custom)
+    const standardCats = ['food', 'drinks', 'crafts', 'clothing', 'other'];
+    const isStandard = standardCats.includes(p.category.toLowerCase());
+    
+    if (isStandard) {
+      document.getElementById('productCategory').value = p.category.toLowerCase();
+      document.getElementById('customCategoryWrapper').style.display = 'none';
+      document.getElementById('customCategory').required = false;
+    } else {
+      document.getElementById('productCategory').value = 'other';
+      document.getElementById('customCategoryWrapper').style.display = 'flex';
+      document.getElementById('customCategory').value = p.category;
+      document.getElementById('customCategory').required = true;
+    }
+
     if (p.image) {
       currentProductImage = p.image;
       document.getElementById('imagePreview').innerHTML = `<img src="${p.image}" alt="">`;
@@ -212,6 +229,7 @@ window.openProductForm = function(productId) {
   } else {
     document.getElementById('productFormTitle').textContent = 'Add Product';
     document.getElementById('productId').value = '';
+    document.getElementById('productCategory').value = 'food';
   }
   switchPage('productFormPage', null); 
 }
@@ -234,6 +252,22 @@ function setupProductForm() {
   const cancelBtn = document.getElementById('cancelProductFormBtn');
   if (cancelBtn) cancelBtn.addEventListener('click', () => switchPage('inventory', 'inventory'));
 
+  // Show/Hide Custom Category Input
+  const categorySelect = document.getElementById('productCategory');
+  const customCategoryWrapper = document.getElementById('customCategoryWrapper');
+  const customCategoryInput = document.getElementById('customCategory');
+
+  categorySelect.addEventListener('change', () => {
+    if (categorySelect.value === 'other') {
+      customCategoryWrapper.style.display = 'flex';
+      customCategoryInput.required = true;
+    } else {
+      customCategoryWrapper.style.display = 'none';
+      customCategoryInput.required = false;
+      customCategoryInput.value = ''; 
+    }
+  });
+
   const imgInput = document.getElementById('productImageInput');
   if (imgInput) {
     imgInput.addEventListener('change', (e) => {
@@ -254,9 +288,20 @@ function setupProductForm() {
     prodForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = document.getElementById('productId').value;
+      
+      // Determine final category
+      let finalCategory = document.getElementById('productCategory').value;
+      if (finalCategory === 'other') {
+        finalCategory = document.getElementById('customCategory').value.trim();
+        if (!finalCategory) {
+          alert("Please enter a custom category name.");
+          return;
+        }
+      }
+
       const productData = {
         name: document.getElementById('productName').value.trim(),
-        category: document.getElementById('productCategory').value,
+        category: finalCategory,
         stock: Number(document.getElementById('productStock').value),
         lowStockThreshold: Number(document.getElementById('productLowStockThreshold').value) || 0,
         price: Number(document.getElementById('productPrice').value),
@@ -270,10 +315,7 @@ function setupProductForm() {
         } else {
           await addDoc(collection(db, `users/${currentUser.uid}/products`), productData);
         }
-        
-        // FIX: Redirect back to inventory after saving
         switchPage('inventory', 'inventory');
-        
       } catch (err) {
         console.error("Error saving product:", err);
         alert("Failed to save product.");
@@ -462,7 +504,7 @@ function renderLowStockList() {
   const container = document.getElementById('lowStockList');
   if (!container) return;
   const low = state.products.filter(p => p.stock <= p.lowStockThreshold).sort((a, b) => a.stock - b.stock);
-  container.innerHTML = low.length === 0 ? `<div class="empty-state">Everything's well stocked. </div>` : low.slice(0, 10).map(p => `<div class="list-row"><div><div class="list-row-title">${escapeHtml(p.name)}</div><div class="list-row-sub">Reorder at ${p.lowStockThreshold}</div></div><div class="list-row-value" style="color: var(--peach-deep);">${p.stock} left</div></div>`).join('');
+  container.innerHTML = low.length === 0 ? `<div class="empty-state">Everything's well stocked. 🌿</div>` : low.slice(0, 10).map(p => `<div class="list-row"><div><div class="list-row-title">${escapeHtml(p.name)}</div><div class="list-row-sub">Reorder at ${p.lowStockThreshold}</div></div><div class="list-row-value" style="color: var(--peach-deep);">${p.stock} left</div></div>`).join('');
 }
 
 function renderEarningsChart() {
