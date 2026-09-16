@@ -3,7 +3,7 @@
    ============================================ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, query, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -90,6 +90,33 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
     await createUserWithEmailAndPassword(auth, email, password);
   } catch (error) {
     document.getElementById('signupError').textContent = error.message;
+  }
+});
+document.getElementById('signupForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('signupEmail').value;
+  const password = document.getElementById('signupPassword').value;
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+  } catch (error) {
+    document.getElementById('signupError').textContent = error.message;
+  }
+});
+
+document.getElementById('forgotPasswordLink').addEventListener('click', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!email) {
+    document.getElementById('loginError').textContent = "Enter your email above first, then click 'Forgot password?'";
+    return;
+  }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    document.getElementById('loginError').style.color = 'var(--sage-deep)';
+    document.getElementById('loginError').textContent = "Reset link sent! Check your inbox.";
+  } catch (error) {
+    document.getElementById('loginError').style.color = '';
+    document.getElementById('loginError').textContent = "Couldn't send reset email. Check the address and try again.";
   }
 });
 
