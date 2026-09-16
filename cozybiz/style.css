@@ -71,7 +71,6 @@ h1, h2, h3 {
 }
 
 .brand-icon { font-size: 26px; }
-
 .brand h1 { font-size: 19px; font-weight: 600; }
 .brand p { margin: 0; font-size: 12px; color: var(--ink-soft); }
 
@@ -622,30 +621,39 @@ h1, h2, h3 {
     box-sizing: border-box;
   }
   
-  /* FIX: Consistent header spacing on all pages */
+  /* FORCE CONSISTENT HEADER SPACING */
   .page-header,
   .inventory-header,
   .sales-header,
   .expenses-header,
   .reports-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-    margin-bottom: 20px;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0 !important;
+    margin-bottom: 20px !important;
   }
   
+  /* Fix the Inventory "Add Product" button spacing */
+  .inventory-header .primary-button {
+    margin-top: 16px !important;
+    width: 100% !important;
+    text-align: center;
+  }
+
   .page-header .eyebrow, .inventory-header .eyebrow, .sales-header .eyebrow,
-  .expenses-header .eyebrow, .reports-header .eyebrow { margin: 0; }
+  .expenses-header .eyebrow, .reports-header .eyebrow { 
+    margin: 0 !important; 
+  }
   
   .page-header h2, .inventory-header h2, .sales-header h2,
   .expenses-header h2, .reports-header h2 {
-    margin: 0;
+    margin: 0 !important;
     font-size: 24px;
   }
   
   .page-header .page-subtitle, .inventory-header .page-subtitle, .sales-header .page-subtitle,
   .expenses-header .page-subtitle, .reports-header .page-subtitle {
-    margin: 0;
+    margin: 0 !important;
     font-size: 13px;
   }
   
