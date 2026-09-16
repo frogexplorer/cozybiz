@@ -312,16 +312,20 @@ function setupProductForm() {
       try {
         if (id) {
           await updateDoc(doc(db, `users/${currentUser.uid}/products`, id), productData);
+          switchPage('inventory', 'inventory');
         } else {
           await addDoc(collection(db, `users/${currentUser.uid}/products`), productData);
+          // Reset form to add another product
+          document.getElementById('productForm').reset();
+          currentProductImage = null;
+          document.getElementById('imagePreview').innerHTML = `<div><span>🖼️</span><p>No image</p></div>`;
+          document.getElementById('customCategoryWrapper').style.display = 'none';
+          document.getElementById('productCategory').value = 'food';
         }
-        switchPage('inventory', 'inventory');
       } catch (err) {
         console.error("Error saving product:", err);
         alert("Failed to save product.");
       }
-    });
-  }
   
   const searchInput = document.getElementById('inventorySearch');
   if (searchInput) searchInput.addEventListener('input', renderInventory);
@@ -336,6 +340,7 @@ function setupProductForm() {
 function populateSaleProductSelect() {
   const select = document.getElementById('saleProductSelect');
   if (!select) return;
+  
   select.innerHTML = state.products.map(p => `<option value="${p.id}" data-price="${p.price}">${escapeHtml(p.name)} (${peso(p.price)}) — ${p.stock} in stock</option>`).join('') || `<option value="">No products yet</option>`;
   updateSaleTotal();
 }
