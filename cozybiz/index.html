@@ -16,7 +16,7 @@
   <div id="loginScreen" class="login-screen">
     <div class="login-card">
       <div class="login-brand">
-        <span class="brand-icon"></span>
+        <span class="brand-icon">🌿</span>
         <h1>CozyBiz</h1>
         <p>small business tool</p>
       </div>
@@ -37,6 +37,9 @@
         </div>
         <button type="submit" class="primary-button full-width">Log In</button>
         <p class="auth-error" id="loginError"></p>
+        <p style="text-align: center; margin-top: 12px;">
+          <a href="#" id="forgotPasswordLink" style="color: var(--sage-deep); font-size: 13px; font-weight: 600;">Forgot password?</a>
+        </p>
       </form>
 
       <form id="signupForm" class="auth-form" style="display: none;">
@@ -116,7 +119,7 @@
             <strong id="statTotalStock">0</strong>
           </div>
           <div class="stat-card peach-card">
-            <span class="stat-icon"></span>
+            <span class="stat-icon">🧾</span>
             <p>This Month's Expenses</p>
             <strong id="statMonthExpenses">₱0</strong>
           </div>
@@ -154,7 +157,7 @@
 
         <div class="inventory-toolbar">
           <div class="search-box">
-            <span></span>
+            <span>🔍</span>
             <input type="text" id="inventorySearch" placeholder="Search products...">
           </div>
           <select id="inventoryCategoryFilter">
@@ -299,7 +302,7 @@
 
               <div class="sale-total-box">
                 <span>Total</span>
-                <strong id="saleTotalDisplay">0.00</strong>
+                <strong id="saleTotalDisplay">₱0.00</strong>
               </div>
 
               <div class="product-form-actions">
@@ -390,7 +393,7 @@
           </div>
           <div class="report-stat-card sage-card">
             <p>Profit</p>
-            <strong id="reportProfit">0</strong>
+            <strong id="reportProfit">₱0</strong>
           </div>
           <div class="report-stat-card peach-card">
             <p>Expenses</p>
