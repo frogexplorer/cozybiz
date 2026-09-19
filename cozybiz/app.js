@@ -3,7 +3,7 @@
    ============================================ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, query, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -93,6 +93,23 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
   }
 });
 
+document.getElementById('forgotPasswordLink').addEventListener('click', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!email) {
+    document.getElementById('loginError').textContent = "Enter your email above first, then click 'Forgot password?'";
+    return;
+  }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    document.getElementById('loginError').style.color = 'var(--sage-deep)';
+    document.getElementById('loginError').textContent = "Reset link sent! Check your inbox.";
+  } catch (error) {
+    document.getElementById('loginError').style.color = '';
+    document.getElementById('loginError').textContent = "Couldn't send reset email. Check the address and try again.";
+  }
+});
+
 document.getElementById('logoutBtn').addEventListener('click', () => {
   signOut(auth);
 });
@@ -102,7 +119,7 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
 function setupRealtimeListeners() {
   if (!currentUser) return;
   const userRef = `users/${currentUser.uid}`;
-  
+
   unsubscribeProducts = onSnapshot(query(collection(db, `${userRef}/products`)), (snapshot) => {
     state.products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     renderInventory();
@@ -172,7 +189,7 @@ function renderInventory() {
 
   tbody.innerHTML = rows.map(p => {
     let statusClass = 'status-ok', statusLabel = 'In stock';
-    if (p.stock <= 0) { statusClass = 'status-out'; statusLabel = 'Out of stock'; } 
+    if (p.stock <= 0) { statusClass = 'status-out'; statusLabel = 'Out of stock'; }
     else if (p.stock <= p.lowStockThreshold) { statusClass = 'status-low'; statusLabel = 'Low stock'; }
 
     const thumb = p.image ? `<img class="product-thumb" src="${p.image}" alt="">` : `<div class="product-thumb"></div>`;
@@ -192,7 +209,7 @@ function renderInventory() {
 window.openProductForm = function(productId) {
   document.getElementById('productForm').reset();
   currentProductImage = null;
-  document.getElementById('imagePreview').innerHTML = `<div><span>️</span><p>No image</p></div>`;
+  document.getElementById('imagePreview').innerHTML = `<div><span>🖼️</span><p>No image</p></div>`;
   document.getElementById('customCategoryWrapper').style.display = 'none';
   document.getElementById('customCategory').required = false;
 
@@ -206,11 +223,10 @@ window.openProductForm = function(productId) {
     document.getElementById('productLowStockThreshold').value = p.lowStockThreshold;
     document.getElementById('productPrice').value = p.price;
     document.getElementById('productCost').value = p.cost;
-    
-    // Handle Category (Standard vs Custom)
+
     const standardCats = ['food', 'drinks', 'crafts', 'clothing', 'other'];
     const isStandard = standardCats.includes(p.category.toLowerCase());
-    
+
     if (isStandard) {
       document.getElementById('productCategory').value = p.category.toLowerCase();
       document.getElementById('customCategoryWrapper').style.display = 'none';
@@ -231,7 +247,7 @@ window.openProductForm = function(productId) {
     document.getElementById('productId').value = '';
     document.getElementById('productCategory').value = 'food';
   }
-  switchPage('productFormPage', null); 
+  switchPage('productFormPage', null);
 }
 
 window.deleteProduct = async function(productId) {
@@ -248,11 +264,10 @@ window.deleteProduct = async function(productId) {
 function setupProductForm() {
   const addBtn = document.getElementById('addProductBtn');
   if (addBtn) addBtn.addEventListener('click', () => window.openProductForm(null));
-  
+
   const cancelBtn = document.getElementById('cancelProductFormBtn');
   if (cancelBtn) cancelBtn.addEventListener('click', () => switchPage('inventory', 'inventory'));
 
-  // Show/Hide Custom Category Input
   const categorySelect = document.getElementById('productCategory');
   const customCategoryWrapper = document.getElementById('customCategoryWrapper');
   const customCategoryInput = document.getElementById('customCategory');
@@ -264,7 +279,7 @@ function setupProductForm() {
     } else {
       customCategoryWrapper.style.display = 'none';
       customCategoryInput.required = false;
-      customCategoryInput.value = ''; 
+      customCategoryInput.value = '';
     }
   });
 
@@ -288,8 +303,7 @@ function setupProductForm() {
     prodForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = document.getElementById('productId').value;
-      
-      // Determine final category
+
       let finalCategory = document.getElementById('productCategory').value;
       if (finalCategory === 'other') {
         finalCategory = document.getElementById('customCategory').value.trim();
@@ -308,21 +322,26 @@ function setupProductForm() {
         cost: Number(document.getElementById('productCost').value),
         image: currentProductImage
       };
-      
+
       try {
         if (id) {
           await updateDoc(doc(db, `users/${currentUser.uid}/products`, id), productData);
+          switchPage('inventory', 'inventory');
         } else {
           await addDoc(collection(db, `users/${currentUser.uid}/products`), productData);
+          document.getElementById('productForm').reset();
+          currentProductImage = null;
+          document.getElementById('imagePreview').innerHTML = `<div><span>🖼️</span><p>No image</p></div>`;
+          document.getElementById('customCategoryWrapper').style.display = 'none';
+          document.getElementById('productCategory').value = 'food';
         }
-        switchPage('inventory', 'inventory');
       } catch (err) {
         console.error("Error saving product:", err);
         alert("Failed to save product.");
       }
     });
   }
-  
+
   const searchInput = document.getElementById('inventorySearch');
   if (searchInput) searchInput.addEventListener('input', renderInventory);
   const catFilter = document.getElementById('inventoryCategoryFilter');
@@ -336,6 +355,7 @@ function setupProductForm() {
 function populateSaleProductSelect() {
   const select = document.getElementById('saleProductSelect');
   if (!select) return;
+
   select.innerHTML = state.products.map(p => `<option value="${p.id}" data-price="${p.price}">${escapeHtml(p.name)} (${peso(p.price)}) — ${p.stock} in stock</option>`).join('') || `<option value="">No products yet</option>`;
   updateSaleTotal();
 }
@@ -373,7 +393,7 @@ window.deleteSale = async function(saleId) {
   const sale = state.sales.find(s => s.id === saleId);
   if (!sale) return;
   if (!confirm(`Delete this sale of ${sale.productName} (${peso(sale.total)})? Stock will be restored.`)) return;
-  
+
   const product = getProduct(sale.productId);
   if (product) {
     await updateDoc(doc(db, `users/${currentUser.uid}/products`, product.id), {
@@ -386,10 +406,10 @@ window.deleteSale = async function(saleId) {
 function setupSalesForm() {
   const dateInput = document.getElementById('saleDate');
   if (dateInput) dateInput.value = todayStr();
-  
+
   const prodSelect = document.getElementById('saleProductSelect');
   if (prodSelect) prodSelect.addEventListener('change', updateSaleTotal);
-  
+
   const qtyInput = document.getElementById('saleQuantity');
   if (qtyInput) qtyInput.addEventListener('input', updateSaleTotal);
 
@@ -399,18 +419,18 @@ function setupSalesForm() {
       e.preventDefault();
       const product = getProduct(document.getElementById('saleProductSelect').value);
       const quantity = Number(document.getElementById('saleQuantity').value);
-      
+
       if (!product) { alert('Add a product first.'); return; }
       if (quantity > product.stock && !confirm(`Only ${product.stock} in stock. Continue?`)) return;
 
-      const saleData = { 
-        productId: product.id, 
-        productName: product.name, 
-        quantity, 
-        unitPrice: product.price, 
-        unitCost: product.cost, 
-        total: product.price * quantity, 
-        date: document.getElementById('saleDate').value 
+      const saleData = {
+        productId: product.id,
+        productName: product.name,
+        quantity,
+        unitPrice: product.price,
+        unitCost: product.cost,
+        total: product.price * quantity,
+        date: document.getElementById('saleDate').value
       };
 
       try {
@@ -418,16 +438,12 @@ function setupSalesForm() {
         await updateDoc(doc(db, `users/${currentUser.uid}/products`, product.id), {
           stock: Math.max(0, product.stock - quantity)
         });
-        
-        // Reset form
-        e.target.reset(); 
-        document.getElementById('saleDate').value = todayStr(); 
+
+        e.target.reset();
+        document.getElementById('saleDate').value = todayStr();
         document.getElementById('saleQuantity').value = 1;
         updateSaleTotal();
-        
-        // FIX: Jump to dashboard after recording
-        switchPage('dashboard', 'dashboard');
-        
+
       } catch (err) {
         console.error("Error recording sale:", err);
         alert("Failed to record sale.");
@@ -470,27 +486,23 @@ window.deleteExpense = async function(expenseId) {
 function setupExpensesForm() {
   const dateInput = document.getElementById('expenseDate');
   if (dateInput) dateInput.value = todayStr();
-  
+
   const expForm = document.getElementById('expenseForm');
   if (expForm) {
     expForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const expenseData = { 
-        description: document.getElementById('expenseDescription').value.trim(), 
-        amount: Number(document.getElementById('expenseAmount').value), 
-        date: document.getElementById('expenseDate').value 
+      const expenseData = {
+        description: document.getElementById('expenseDescription').value.trim(),
+        amount: Number(document.getElementById('expenseAmount').value),
+        date: document.getElementById('expenseDate').value
       };
-      
+
       try {
         await addDoc(collection(db, `users/${currentUser.uid}/expenses`), expenseData);
-        
-        // Reset form
-        e.target.reset(); 
+
+        e.target.reset();
         document.getElementById('expenseDate').value = todayStr();
-        
-        // FIX: Jump to dashboard after recording
-        switchPage('dashboard', 'dashboard');
-        
+
       } catch (err) {
         console.error("Error adding expense:", err);
         alert("Failed to add expense.");
@@ -591,6 +603,7 @@ function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
 /* ============================================
    EXPORT TO EXCEL (CSV)
    ============================================ */
@@ -613,26 +626,22 @@ const exportBtn = document.getElementById('exportReportsCsvBtn');
 if (exportBtn) {
   exportBtn.addEventListener('click', () => {
     let csv = "CozyBiz Data Export\n\n";
-    
-    // 1. Export Products
+
     csv += "PRODUCTS\nName,Category,Stock,Price,Cost\n";
     state.products.forEach(p => {
       csv += `"${p.name}","${p.category}",${p.stock},${p.price},${p.cost}\n`;
     });
-    
-    // 2. Export Sales
+
     csv += "\nSALES\nDate,Product,Quantity,Total\n";
     state.sales.forEach(s => {
       csv += `"${s.date}","${s.productName}",${s.quantity},${s.total}\n`;
     });
 
-    // 3. Export Expenses
     csv += "\nEXPENSES\nDate,Description,Amount\n";
     state.expenses.forEach(x => {
       csv += `"${x.date}","${x.description}",${x.amount}\n`;
     });
 
-    // Trigger download
     downloadCSV(csv, `CozyBiz_Data_${todayStr()}.csv`);
   });
 }
